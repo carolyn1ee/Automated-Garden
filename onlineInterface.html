@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title> automated garden interface!></title>
+	<style>
+		body {
+			margin:30px;
+			padding: 0px;
+			overflow:hidden;
+		}
+	</style>
+</head>
+
+	<body>
+	<canvas id="myCanvas">
+	</canvas>
+	<script>
+		var canvas = document.getElementById("myCanvas");
+		var ctx = canvas.getContext("2d");
+
+		marg = canvas.offsetLeft;
+		console.log (marg);
+
+		w = window.innerWidth - 2*marg;
+		h = window.innerHeight - 2*marg;
+
+
+		ctx.canvas.width = w + "";
+		ctx.canvas.height = h + "";
+		
+		var numCell = 10;
+		var cellLen = Math.min (w/2/numCell, h/numCell); //boxes are only on half of the screen
+		//draw a grid!!!!
+		function drawHor (cellLen, numCell){
+			for (i =0; i < numCell+1; i ++){
+				ctx.moveTo (0, i*cellLen);
+				ctx.lineTo (numCell*cellLen, i*cellLen);
+				ctx.stroke();
+			}
+		}
+		function drawVert (cellLen, numCell){
+			for (i =0; i < numCell+1; i ++){
+				ctx.moveTo (i*cellLen, 0);
+				ctx.lineTo (i*cellLen, numCell*cellLen);
+				ctx.stroke();
+			}
+		}
+		function drawGrid (numCell, cellLen){
+			drawHor (cellLen, numCell);
+			drawVert (cellLen, numCell);
+		}
+		
+		drawGrid (numCell, cellLen);
+
+		function getCloseGrid (x, y, cellLen, numCell){
+			var cellX = x  % cellLen;
+			if (x - cellX * cellLen > cellLen / 2){
+				cellX += 1;
+			}
+			var cellY = y % cellLen;
+			if (y - cellY * cellLen > cellLen / 2){
+				cellY += 1;
+			}
+			return (cellX, cellY);
+		}
+		window.onmousedown = function (cellLen, numCell){
+			var x = getCloseGrid (event.clientX, event.clientY, cellLen, numCell) [0];
+			var y = getCloseGrid (event.clientXevent.clientY, cellLen, numCell) [1];
+			ctx.beginPath();
+			ctx.arc(x * cellLen, x * cellLen, 10, 0, 2 * Math.PI);
+			ctx.fill();
+			console.log (x, y);
+		}
+
+
+		
+		
+	</script>
+
+</body>
+
+
+</html>
