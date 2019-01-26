@@ -8,19 +8,22 @@
 			padding: 0px;
 			overflow:hidden;
 		}
+
 	</style>
 </head>
 
 	<body>
-	<canvas id="myCanvas">
-	</canvas>
+	<div>
+		<canvas id="myCanvas"></canvas>
+		<button id = "water" style="position: absolute; top:50px; right:50px;" onclick="water() {
+			water = true;
+		}">Water!!</button>
+	</div>
 	<script>
 		var canvas = document.getElementById("myCanvas");
 		var ctx = canvas.getContext("2d");
 
 		marg = canvas.offsetLeft;
-		console.log (marg);
-
 		w = window.innerWidth - 2*marg;
 		h = window.innerHeight - 2*marg;
 
@@ -30,51 +33,75 @@
 		
 		var numCell = 10;
 		var cellLen = Math.min (w/2/numCell, h/numCell); //boxes are only on half of the screen
+
+		var selectedCell = [];
+		var wateredCells = [];
+
 		//draw a grid!!!!
-		function drawHor (cellLen, numCell){
+		function drawHor (){
 			for (i =0; i < numCell+1; i ++){
 				ctx.moveTo (0, i*cellLen);
 				ctx.lineTo (numCell*cellLen, i*cellLen);
 				ctx.stroke();
 			}
 		}
-		function drawVert (cellLen, numCell){
+		function drawVert (){
 			for (i =0; i < numCell+1; i ++){
 				ctx.moveTo (i*cellLen, 0);
 				ctx.lineTo (i*cellLen, numCell*cellLen);
 				ctx.stroke();
 			}
 		}
-		function drawGrid (numCell, cellLen){
-			drawHor (cellLen, numCell);
-			drawVert (cellLen, numCell);
+		function drawGrid (){
+			ctx.strokeStyle = "#000000";
+			ctx.lineWidth = 2;
+			drawHor ();
+			drawVert ();
 		}
-		
-		drawGrid (numCell, cellLen);
 
-		function getCloseGrid (x, y, cellLen, numCell){
-			var cellX = x  % cellLen;
-			if (x - cellX * cellLen > cellLen / 2){
-				cellX += 1;
-			}
-			var cellY = y % cellLen;
-			if (y - cellY * cellLen > cellLen / 2){
-				cellY += 1;
-			}
-			return (cellX, cellY);
+		function getCloseGrid (x, y){
+			var cellX = Math.floor (x  / cellLen);
+			var cellY = Math.floor (y / cellLen);
+			return [cellX, cellY];
 		}
-		window.onmousedown = function (cellLen, numCell){
-			var x = getCloseGrid (event.clientX, event.clientY, cellLen, numCell) [0];
-			var y = getCloseGrid (event.clientXevent.clientY, cellLen, numCell) [1];
+		window.onmousedown = function (){
+			if (event.clientX - 30 < numCell * cellLen && event.clientX - 30 > 0 && event.clientY - 30 < numCell * cellLen && event.clientY - 30 > 0){
+				selectedCell = (getCloseGrid (event.clientX - 30, event.clientY - 30));
+			}
+			redraw();
+		}
+
+
+		window.onresize = function (){
+			console.log (9);
+			w = window.innerWidth - 2*marg;
+			h = window.innerHeight - 2*marg;
+			canvas.height = window.innerHeight;
+			canvas.width = window.innerWidth;
+			cellLen = Math.min (w/2/numCell, h/numCell);
+			redraw();
+		}
+
+		function drawSelected (){
+			console.log (selectedCell);
+			ctx.strokeStyle = "#4dff4d";
+			ctx.lineWidth = 5;
 			ctx.beginPath();
-			ctx.arc(x * cellLen, x * cellLen, 10, 0, 2 * Math.PI);
-			ctx.fill();
-			console.log (x, y);
+			ctx.rect (selectedCell[0]*cellLen, selectedCell[1]*cellLen, cellLen, cellLen);
+			ctx.stroke();
 		}
 
+		function redraw (){
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			drawGrid ();
+			drawSelected();
+		}
 
+		function main (){
+			redraw();
+		}
 		
-		
+		main();
 	</script>
 
 </body>
